@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini App: คำนวณค่าไฟเครื่องใช้ไฟฟ้า</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap');
+        
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .calculator-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .results {
+            margin-top: 25px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .result-item:last-child {
+            margin-bottom: 0;
+            font-weight: 500;
+            font-size: 18px;
+            color: #e74c3c;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .note {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <h2>⚡ คำนวณค่าไฟรายวันรายปี</h2>
+    
+    <div class="input-group">
+        <label for="watt">กำลังไฟฟ้า (Watt):</label>
+        <input type="number" id="watt" value="45" min="0" oninput="calculate()">
+    </div>
+    
+    <div class="input-group">
+        <label for="hours">ชั่วโมงที่ใช้ต่อวัน (สูงสุด 24):</label>
+        <input type="number" id="hours" value="10" min="0" max="24" oninput="calculate()">
+    </div>
+    
+    <div class="input-group">
+        <label for="rate">ค่าไฟ (บาท/หน่วย):</label>
+        <input type="number" id="rate" value="4.5" min="0" step="0.1" oninput="calculate()">
+    </div>
+
+    <div class="results">
+        <div class="result-item">
+            <span>ค่าไฟต่อวัน:</span>
+            <span id="costDay">0.00 บาท</span>
+        </div>
+        <div class="result-item">
+            <span>ค่าไฟต่อเดือน (30 วัน):</span>
+            <span id="costMonth">0.00 บาท</span>
+        </div>
+        <div class="result-item">
+            <span>ค่าไฟต่อปี (365 วัน):</span>
+            <span id="costYear">0.00 บาท</span>
+        </div>
+    </div>
+    
+    <div class="note">* คำนวณเบื้องต้นจากการใช้ไฟคงที่ ไม่รวมค่าบริการและ Ft แบบแปรผัน</div>
+</div>
+
+<script>
+    function calculate() {
+        // รับค่าจาก Input
+        let watt = parseFloat(document.getElementById('watt').value) || 0;
+        let hours = parseFloat(document.getElementById('hours').value) || 0;
+        let rate = parseFloat(document.getElementById('rate').value) || 0;
+
+        // จำกัดชั่วโมงไม่เกิน 24
+        if (hours > 24) {
+            hours = 24;
+            document.getElementById('hours').value = 24;
+        }
+
+        // คำนวณหน่วย (Unit) ต่อวัน = (Watt x Hours) / 1000
+        let unitsPerDay = (watt * hours) / 1000;
+
+        // คำนวณค่าไฟ
+        let costPerDay = unitsPerDay * rate;
+        let costPerMonth = costPerDay * 30; // 1 เดือน = 30 วัน
+        let costPerYear = costPerDay * 365; // 1 ปี = 365 วัน
+
+        // แสดงผลลัพธ์ (ทศนิยม 2 ตำแหน่ง)
+        document.getElementById('costDay').innerText = costPerDay.toFixed(2) + " บาท";
+        document.getElementById('costMonth').innerText = costPerMonth.toFixed(2) + " บาท";
+        document.getElementById('costYear').innerText = costPerYear.toFixed(2) + " บาท";
+    }
+
+    // เรียกทำงานครั้งแรกตอนโหลดหน้าเว็บ
+    calculate();
+</script>
+
+</body>
+</html>
